@@ -22,4 +22,6 @@ public class LightButton : MonoBehaviour
 
     public void SetGridPos(Vector2Int pos) => gridPos = pos;
 
+    public void ButtonPressed() => LightBoardManager.Instance.ButtonPressed(gridPos);
+
 }
