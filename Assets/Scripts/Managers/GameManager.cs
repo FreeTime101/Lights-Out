@@ -19,7 +19,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        UpdateGameState(GameState.Start);
+        UpdateGameState(GameState.Restart);
     }
 
     public void UpdateGameState(GameState newState)
@@ -33,7 +33,9 @@ public class GameManager : Singleton<GameManager>
             case GameState.GameOver:
                 break;
             case GameState.Restart:
-                break;
+                OnGameStateChanged?.Invoke(newState);
+                UpdateGameState(GameState.Start);
+                return;
             default:
                 break;
         }

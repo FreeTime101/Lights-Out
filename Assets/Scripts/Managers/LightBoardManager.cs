@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LightBoardManager : Singleton<LightBoardManager>
 {
@@ -13,14 +14,20 @@ public class LightBoardManager : Singleton<LightBoardManager>
     public Color32 lightOffColor = new Color32(105, 105, 105, 255);
 
     private LightButton[,] lightGrid;
+    private Button[,] lightButtons;
     private bool[,] lightStatus;
+
+    private List<Vector2Int> boardSetupSequence;
 
     protected override void Awake()
     {
         base.Awake();
 
-        lightGrid = new LightButton[5,5];
-        lightStatus = new bool[5,5];
+        lightGrid = new LightButton[5, 5];
+        lightButtons = new Button[5, 5];
+        lightStatus = new bool[5, 5];
+        boardSetupSequence = new List<Vector2Int>();
+
         ReadAllLightButtons();
         ValdiateRandomRange();
 
@@ -32,12 +39,14 @@ public class LightBoardManager : Singleton<LightBoardManager>
         switch (state)
         {
             case GameManager.GameState.Start:
-                ResetLightStates();
                 RandomStartBoard();
+                SetButtonsInteractable(true);
                 break;
             case GameManager.GameState.GameOver:
+                SetButtonsInteractable(false);
                 break;
             case GameManager.GameState.Restart:
+                ResetLightStates();
                 break;
             default:
                 break;
@@ -77,6 +86,7 @@ public class LightBoardManager : Singleton<LightBoardManager>
             foreach (Transform lightButton in row) 
             {
                 lightGrid[x, y] = lightButton.gameObject.GetComponent<LightButton>();
+                lightButtons[x, y] = lightButton.gameObject.GetComponent<Button>();
                 lightGrid[x, y].SetGridPos(new Vector2Int(x, y));
                 x++;
             }
@@ -93,8 +103,16 @@ public class LightBoardManager : Singleton<LightBoardManager>
             {
                 lightGrid[x, y].SetLight(false);
                 lightStatus[x, y] = false;
-            } 
+            }
 
+        boardSetupSequence.Clear();
+    }
+
+    private void SetButtonsInteractable(bool isInteractable) 
+    {
+        for (int y = 0; y < lightButtons.GetLength(1); y++)
+            for (int x = 0; x < lightButtons.GetLength(0); x++)
+                lightButtons[x, y].interactable = isInteractable;
     }
 
     private void RandomStartBoard() 
@@ -110,6 +128,7 @@ public class LightBoardManager : Singleton<LightBoardManager>
             x = Random.Range(0, lightGrid.GetLength(0));
             y = Random.Range(0, lightGrid.GetLength(1));
             ButtonPressed(new Vector2Int(x, y));
+            boardSetupSequence.Add(new Vector2Int(x, y));
         }
     }
 
@@ -121,6 +140,8 @@ public class LightBoardManager : Singleton<LightBoardManager>
         TryUpdateNeighborLight(pos, Vector2Int.right); // Right
         TryUpdateNeighborLight(pos, Vector2Int.up); // Down
         TryUpdateNeighborLight(pos, Vector2Int.left); // Left
+
+        CheckWinCondition();
     }
 
     private void TryUpdateNeighborLight(Vector2Int pressedPos, Vector2Int directionVector) 
@@ -153,6 +174,16 @@ public class LightBoardManager : Singleton<LightBoardManager>
     {
         lightStatus[pos.x, pos.y] = !lightStatus[pos.x, pos.y];
         lightGrid[pos.x, pos.y].SetLight(lightStatus[pos.x, pos.y]);
+    }
+
+    private void CheckWinCondition() 
+    {
+        for (int y = 0; y < lightStatus.GetLength(1); y++)
+            for (int x = 0; x < lightStatus.GetLength(0); x++)
+                if (lightStatus[x, y])
+                    return;
+
+        GameManager.Instance.UpdateGameState(GameManager.GameState.GameOver);
     }
 
 }
