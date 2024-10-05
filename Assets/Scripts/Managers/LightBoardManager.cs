@@ -42,6 +42,7 @@ public class LightBoardManager : Singleton<LightBoardManager>
             case GameManager.GameState.Start:
                 RandomStartBoard();
                 SetButtonsInteractable(true);
+                StatsManager.Instance.SetTimerState(true);
                 break;
             case GameManager.GameState.GameOver:
                 SetButtonsInteractable(false);
