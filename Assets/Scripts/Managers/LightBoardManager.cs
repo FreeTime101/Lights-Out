@@ -7,6 +7,7 @@ public class LightBoardManager : Singleton<LightBoardManager>
 {
 
     [Header("Light Board Settings")]
+    [SerializeField] private Animator gameOverAnimator;
     [SerializeField] private Transform lightBoardObj;
     [Tooltip("Range for the number of buttons the system try to randomly press before the game start.")]
     [SerializeField] private Vector2Int gridRandomRange = new Vector2Int(5, 10);
@@ -44,8 +45,10 @@ public class LightBoardManager : Singleton<LightBoardManager>
                 break;
             case GameManager.GameState.GameOver:
                 SetButtonsInteractable(false);
+                gameOverAnimator.SetTrigger("showTrigger");
                 break;
             case GameManager.GameState.Restart:
+                gameOverAnimator.SetTrigger("hideTrigger");
                 ResetLightStates();
                 break;
             default:
