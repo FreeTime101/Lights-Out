@@ -7,6 +7,7 @@ public class GameManager : Singleton<GameManager>
 {
 
     public GameState state { get; private set; }
+    public bool standbyMode { get; private set; } = true; // waiting for first game to start
 
     public static event Action<GameState> OnGameStateChanged;
 
@@ -19,7 +20,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        UpdateGameState(GameState.Restart);
+        UpdateGameState(GameState.GameOver);
     }
 
     public void UpdateGameState(GameState newState)
@@ -33,6 +34,7 @@ public class GameManager : Singleton<GameManager>
             case GameState.GameOver:
                 break;
             case GameState.Restart:
+                standbyMode = false;
                 OnGameStateChanged?.Invoke(newState);
                 UpdateGameState(GameState.Start);
                 return;

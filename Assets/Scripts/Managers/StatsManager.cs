@@ -7,9 +7,10 @@ using UnityEngine;
 public class StatsManager : Singleton<StatsManager>
 {
 
-    [Header("Obejct References")]
+    [Header("Object References")]
     [SerializeField] private TextMeshProUGUI movesText;
     [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private Animator newGameAnimator;
 
     private int pressedAmount = 0;
     private int passedTime = 0;
@@ -50,6 +51,7 @@ public class StatsManager : Singleton<StatsManager>
                 isTimerRun = false;
                 break;
             case GameManager.GameState.Restart:
+                newGameAnimator.SetTrigger("HideTrigger");
                 pressedAmount = 0;
                 passedTime = 0;
                 timer = 0;
@@ -77,5 +79,7 @@ public class StatsManager : Singleton<StatsManager>
     }
 
     public void SetTimerState(bool isRun) => isTimerRun = isRun;
+
+    public void FlashNewGameText() => newGameAnimator.SetTrigger("FlashTrigger");
 
 }

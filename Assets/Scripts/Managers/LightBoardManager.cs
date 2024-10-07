@@ -46,7 +46,8 @@ public class LightBoardManager : Singleton<LightBoardManager>
                 break;
             case GameManager.GameState.GameOver:
                 SetButtonsInteractable(false);
-                gameOverAnimator.SetTrigger("showTrigger");
+                if (!GameManager.Instance.standbyMode)
+                    gameOverAnimator.SetTrigger("showTrigger");
                 break;
             case GameManager.GameState.Restart:
                 gameOverAnimator.SetTrigger("hideTrigger");
