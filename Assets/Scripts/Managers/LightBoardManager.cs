@@ -18,7 +18,9 @@ public class LightBoardManager : Singleton<LightBoardManager>
     private Button[,] lightButtons;
     private bool[,] lightStatus;
 
-    private List<Vector2Int> boardSetupSequence;
+    #if (UNITY_EDITOR)
+        private List<Vector2Int> boardSetupSequence;
+    #endif
 
     protected override void Awake()
     {
@@ -27,7 +29,10 @@ public class LightBoardManager : Singleton<LightBoardManager>
         lightGrid = new LightButton[5, 5];
         lightButtons = new Button[5, 5];
         lightStatus = new bool[5, 5];
-        boardSetupSequence = new List<Vector2Int>();
+
+        #if (UNITY_EDITOR)
+            boardSetupSequence = new List<Vector2Int>();
+        #endif
 
         ReadAllLightButtons();
         ValdiateRandomRange();
@@ -110,7 +115,9 @@ public class LightBoardManager : Singleton<LightBoardManager>
                 lightStatus[x, y] = false;
             }
 
-        boardSetupSequence.Clear();
+        #if (UNITY_EDITOR)
+            boardSetupSequence.Clear();
+        #endif
     }
 
     private void SetButtonsInteractable(bool isInteractable) 
@@ -133,7 +140,10 @@ public class LightBoardManager : Singleton<LightBoardManager>
             x = Random.Range(0, lightGrid.GetLength(0));
             y = Random.Range(0, lightGrid.GetLength(1));
             ButtonPressed(new Vector2Int(x, y));
-            boardSetupSequence.Add(new Vector2Int(x, y));
+
+            #if (UNITY_EDITOR)
+                boardSetupSequence.Add(new Vector2Int(x, y));
+            #endif
         }
     }
 
